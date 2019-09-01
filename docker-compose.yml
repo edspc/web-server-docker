@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  php-backend:
+    image: edspc/php-fpm-alpine:7.2
+    environment:
+      - PHP_IDE_CONFIG=serverName=php-backend.docker
+      - XDEBUG_CONFIG=remote_host=172.30.0.1 remote_port=9000 remote_enable=on idekey=PHPSTORM
+    volumes:
+      - ./data:/var/www:rw
+      - ./docker/php-backend/etc/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
+      - ./docker/php-backend/etc/conf.d:/usr/local/etc/conf.d:ro
+
+  database:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=azzTPLYbnTsRUG8EHHTn
+    ports:
+      - 127.0.0.1:3306:3306
+    command: --innodb-use-native-aio=0
+    volumes:
+      - db-data:/var/lib/mysql
+
+  nginx:
+    image: edspc/nginx-alpine
+    ports:
+      - 80:80
+    depends_on:
+      - php-backend
+    volumes:
+      - ./data:/var/www:rw
+      - ./docker/nginx/etc/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/etc/conf.d:/etc/nginx/conf.d
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16
+
+volumes:
+  db-data:

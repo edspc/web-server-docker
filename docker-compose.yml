@@ -5,11 +5,12 @@ services:
     image: edspc/php-fpm-alpine:7.2
     environment:
       - PHP_IDE_CONFIG=serverName=php-backend.docker
-      - XDEBUG_CONFIG=remote_host=172.30.0.1 remote_port=9000 remote_enable=on idekey=PHPSTORM
+      - XDEBUG_CONFIG=remote_host=172.31.0.1 remote_port=9000 remote_enable=on idekey=PHPSTORM
     volumes:
       - ./data:/var/www:rw
       - ./docker/php-backend/etc/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
       - ./docker/php-backend/etc/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      - ./tmp/xdebug:/tmp/xdebug:rw
 
   database:
     image: mysql:8
@@ -36,7 +37,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.30.0.0/16
+        - subnet: 172.31.0.0/16
 
 volumes:
   db-data:

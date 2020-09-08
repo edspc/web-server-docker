@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION:-7.5.2}
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data:Z
+
+volumes:
+  elastic-data:

@@ -2,23 +2,21 @@ version: '3.7'
 
 services:
   php-backend:
-    image: edspc/php-fpm-alpine:7.2
+    image: edspc/php-fpm-alpine:${PHP_VERSION:-7.4}
     environment:
       - PHP_IDE_CONFIG=serverName=php-backend.docker
       - XDEBUG_CONFIG=remote_host=172.31.0.1 remote_port=9000 remote_enable=on idekey=PHPSTORM
     volumes:
-      - ./data:/var/www:rw
+      - ./data:/var/www:Z
       - ./docker/php-backend/etc/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
       - ./docker/php-backend/etc/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini:ro
-      - ./tmp/xdebug:/tmp/xdebug:rw
 
   database:
-    image: mysql:8
+    image: mariadb:${MARIADB_VERSION:-10.2}
     environment:
       - MYSQL_ROOT_PASSWORD=azzTPLYbnTsRUG8EHHTn
     ports:
-      - 127.0.0.1:3306:3306
-    command: --innodb-use-native-aio=0
+      - 3306:3306
     volumes:
       - db-data:/var/lib/mysql
 
@@ -29,7 +27,7 @@ services:
     depends_on:
       - php-backend
     volumes:
-      - ./data:/var/www:rw
+      - ./data:/var/www:Z
       - ./docker/nginx/etc/nginx.conf:/etc/nginx/nginx.conf:ro
 
 networks:
